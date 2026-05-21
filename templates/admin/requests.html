@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div class="card-modern card">
+    <div class="card-header-modern text-white">
+        <h3 class="mb-0">Управление заявками на бронирование</h3>
+    </div>
+    <div class="card-body p-4">
+        <!-- фильтры -->
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <a href="{{ url_for('admin.admin_requests', status='all', page=1) }}" class="btn {% if current_filter == 'all' %}btn-gradient text-white{% else %}btn-outline-secondary{% endif %} btn-sm">Все</a>
+            <a href="{{ url_for('admin.admin_requests', status='new', page=1) }}" class="btn {% if current_filter == 'new' %}btn-gradient text-white{% else %}btn-outline-secondary{% endif %} btn-sm">Новые</a>
+            <a href="{{ url_for('admin.admin_requests', status='appointed', page=1) }}" class="btn {% if current_filter == 'appointed' %}btn-gradient text-white{% else %}btn-outline-secondary{% endif %} btn-sm">Мероприятие назначено</a>
+            <a href="{{ url_for('admin.admin_requests', status='completed', page=1) }}" class="btn {% if current_filter == 'completed' %}btn-gradient text-white{% else %}btn-outline-secondary{% endif %} btn-sm">Мероприятие завершено</a>
+        </div>
+
+        {% if requests %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="px-3 py-3">
+                                <a href="#" class="text-decoration-none text-dark">ID ↕</a>
+                            </th>
+                            <th class="px-3 py-3">Помещение</th>
+                            <th class="px-3 py-3">Пользователь</th>
+                            <th class="px-3 py-3">Желаемая дата</th>
+                            <th class="px-3 py-3">Оплата</th>
+                            <th class="px-3 py-3">Статус</th>
+                            <th class="px-3 py-3">Дата создания</th>
+                            <th class="px-3 py-3">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr>
+                            <td class="px-3 py-3">{{ req.id }}</td>
+                            <td class="px-3 py-3"><strong>{{ req.get_room_name() }}</strong></td>
+                            <td class="px-3 py-3">
+                                {{ req.user.get_full_name() }}<br>
+                                <small class="text-muted">{{ req.user.email }}</small>
+                            </td>
+                            <td class="px-3 py-3">{{ req.start_date.strftime('%d.%m.%Y') }}</td>
+                            <td class="px-3 py-3">{{ req.get_payment_method_name() }}</td>
+                            <td class="px-3 py-3">
+                                <span class="badge bg-{{ get_status_color(req.status) }} px-3 py-2 rounded-pill">
+                                    {{ get_status_name(req.status) }}
+                                </span>
+                            </td>
+                            <td class="px-3 py-3 text-muted">{{ req.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                            <td class="px-3 py-3">
+                                <form method="POST" action="{{ url_for('admin.change_request_status', request_id=req.id, new_status='') }}" onchange="this.submit()">
+                                    <select name="new_status" class="form-select form-select-sm" style="width: auto; min-width: 180px;">
+                                        <option value="" disabled selected>Изменить статус</option>
+                                        {% if req.status != 'new' %}
+                                            <option value="new">Новая</option>
+                                        {% endif %}
+                                        {% if req.status != 'appointed' %}
+                                            <option value="appointed">Мероприятие назначено</option>
+                                        {% endif %}
+                                        {% if req.status != 'completed' %}
+                                            <option value="completed">Мероприятие завершено</option>
+                                        {% endif %}
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- навигация -->
+            {% if pagination.pages > 1 %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if pagination.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin.admin_requests', status=current_filter, page=pagination.prev_num) }}">Назад</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Назад</span></li>
+                    {% endif %}
+
+                    {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                        {% if page_num %}
+                            {% if page_num == pagination.page %}
+                                <li class="page-item active"><span class="page-link" style="background: #28A745; border-color: #28A745;">{{ page_num }}</span></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="{{ url_for('admin.admin_requests', status=current_filter, page=page_num) }}">{{ page_num }}</a></li>
+                            {% endif %}
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if pagination.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin.admin_requests', status=current_filter, page=pagination.next_num) }}">Вперед</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Вперед</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info text-center">Заявок не найдено</div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('select[name="new_status"]').forEach(select => {
+        select.addEventListener('change', function() {
+            var form = this.closest('form');
+            var action = form.action;
+            var newAction = action.replace(/\/[^\/]*$/, '/' + this.value);
+            form.action = newAction;
+            form.submit();
+        });
+    });
+</script>
+{% endblock %}

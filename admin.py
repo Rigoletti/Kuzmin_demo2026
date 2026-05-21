@@ -76,26 +76,3 @@ def change_request_status(request_id, new_status):
     status_names = {'new': 'Новая', 'appointed': 'Мероприятие назначено', 'completed': 'Мероприятие завершено'}
     flash(f'Статус заявки "{req.get_room_name()}" изменен на "{status_names[new_status]}"', 'success')
     return redirect(url_for('admin.admin_requests'))
-
-
-@admin_bp.route('/users')
-@login_required
-@admin_required
-def admin_users():
-    users = User.query.filter_by(is_admin=False).order_by(User.created_at.desc()).all()
-    return render_template('admin/users.html', users=users)
-
-
-@admin_bp.route('/user/<int:user_id>/delete', methods=['POST'])
-@login_required
-@admin_required
-def delete_user(user_id):
-    user = User.query.get_or_404(user_id)
-    if user.is_admin:
-        flash('Нельзя удалить администратора', 'danger')
-        return redirect(url_for('admin.admin_users'))
-
-    db.session.delete(user)
-    db.session.commit()
-    flash(f'Пользователь {user.get_full_name()} удален', 'success')
-    return redirect(url_for('admin.admin_users'))

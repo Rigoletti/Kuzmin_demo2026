@@ -51,19 +51,6 @@ def utility_processor():
 
     return dict(get_status_color=get_status_color, get_status_name=get_status_name, get_room_name=get_room_name)
 
-@app.route('/')
-def index():
-    total_users = User.query.filter_by(is_admin=False).count()
-    total_requests = Request.query.count()
-    completed_requests = Request.query.filter_by(status='completed').count()
-    latest_requests = Request.query.order_by(Request.created_at.desc()).limit(5).all()
-
-    return render_template('index.html',
-                           total_users=total_users,
-                           total_requests=total_requests,
-                           completed_requests=completed_requests,
-                           latest_requests=latest_requests)
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -127,7 +114,7 @@ def login():
                     last_name='Администратор',
                     first_name='Системный',
                     patronymic='',
-                    phone='80000000000',
+                    phone='8000000000',
                     is_admin=True
                 )
                 admin.set_password('Demo20')

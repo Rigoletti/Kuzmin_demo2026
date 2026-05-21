@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card-modern card mb-4">
+            <div class="card-header-modern text-white">
+                <h2 class="mb-0">Панель управления администратора</h2>
+                <p class="mb-0 mt-2">Портал "Конференции.РФ" - управление бронированием помещений</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Пользователи</h6>
+                <h2 class="display-5 fw-bold text-primary-custom mb-0">{{ total_users }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Всего заявок</h6>
+                <h2 class="display-5 fw-bold text-primary-custom mb-0">{{ total_requests }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Новые</h6>
+                <h2 class="display-5 fw-bold text-warning mb-0">{{ new_requests }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-center border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Мероприятие завершено</h6>
+                <h2 class="display-5 fw-bold text-success mb-0">{{ completed_requests }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-modern">
+            <div class="card-header-modern text-white">
+                <h3 class="mb-0">Последние заявки</h3>
+            </div>
+            <div class="card-body p-0">
+                {% if latest_requests %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="px-4 py-3">ID</th>
+                                    <th class="px-4 py-3">Помещение</th>
+                                    <th class="px-4 py-3">Пользователь</th>
+                                    <th class="px-4 py-3">Статус</th>
+                                    <th class="px-4 py-3">Дата</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in latest_requests %}
+                                <tr>
+                                    <td class="px-4 py-3">{{ req.id }}</td>
+                                    <td class="px-4 py-3">{{ req.get_room_name() }}</td>
+                                    <td class="px-4 py-3">{{ req.user.get_short_name() if req.user else 'Неизвестно' }}</td>
+                                    <td class="px-4 py-3">
+                                        <span class="badge bg-{{ get_status_color(req.status) }} px-3 py-2 rounded-pill">
+                                            {{ get_status_name(req.status) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-muted">{{ req.created_at.strftime('%d.%m.%Y') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <p class="text-muted mb-0">Нет заявок</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-modern">
+            <div class="card-header-modern text-white">
+                <h3 class="mb-0">Новые пользователи</h3>
+            </div>
+            <div class="card-body p-0">
+                {% if latest_users %}
+                    <ul class="list-group list-group-flush">
+                        {% for user in latest_users %}
+                            <li class="list-group-item">
+                                <strong>{{ user.get_short_name() }}</strong><br>
+                                <small class="text-muted">{{ user.email }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-center py-5">
+                        <p class="text-muted mb-0">Нет новых пользователей</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
