@@ -42,6 +42,27 @@
             box-sizing: border-box;
         }
 
+            /* Прижимаем футер к низу */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex: 1 0 auto;
+        }
+
+        .footer-modern {
+            flex-shrink: 0;
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #FFFFFF;
@@ -365,7 +386,46 @@
         </div>
 
         {% block page_content %}{% endblock %}
+
     </div>
+
+
+<footer style="background: #343A40; color: #FFFFFF; margin-top: 50px; padding: 40px 0 20px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h3 style="color: #28A745; font-size: 18px; font-weight: 600; margin-bottom: 20px;">Наше местонахождение</h3>
+                <p style="font-size: 16px; font-weight: 400; margin-bottom: 8px;">
+                    Адрес головного офиса:<br>
+                    г. Москва, ул. Большая Ордынка, д. 15
+                </p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h3 style="color: #28A745; font-size: 18px; font-weight: 600; margin-bottom: 20px;">Контакты</h3>
+                <p style="font-size: 16px; font-weight: 400; margin-bottom: 8px;">
+                    Телефон горячей линии:<br>
+                    <a href="tel:+74951234567" style="color: #FFFFFF; text-decoration: none;">+7 (495) 123-45-67</a>
+                </p>
+                <p style="font-size: 14px; font-weight: 300; margin-top: 15px; color: #CED4DA;">
+                    Если возникли вопросы или пожелания, позвоните нам.<br>
+                    Ответим оперативно и подробно.
+                </p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h3 style="color: #28A745; font-size: 18px; font-weight: 600; margin-bottom: 20px;">Мы в соцсетях</h3>
+                <a href="#">
+                    <img src="{{ url_for('static', filename='images/soc.png') }}" style="width: 64px; height: 30px;">
+                </a>
+                <p style="font-size: 12px; font-weight: 300; margin-top: 10px; color: #CED4DA;">
+                    Подписывайтесь на нас в социальных сетях
+                </p>
+            </div>
+        </div>
+
+        
+    </div>
+</footer>
 
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 
@@ -456,3 +516,4 @@
     </script>
 </body>
 </html>
+
