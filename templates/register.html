@@ -1,0 +1,100 @@
++{% extends "base.html" %}
+
+{% block page_content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card-modern card">
+            <div class="card-header-modern text-white">
+                <h2>Создать аккаунт</h2>
+                <p>Заполните форму для регистрации</p>
+            </div>
+            
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('register') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold">{{ form.username.label.text }}</label>
+                        {{ form.username(class="form-control form-control-modern", placeholder="Логин (латиница, цифры, от 6 символов)") }}
+                        {% for error in form.username.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="last_name" class="form-label fw-semibold">{{ form.last_name.label.text }}</label>
+                            {{ form.last_name(class="form-control form-control-modern", placeholder="Фамилия") }}
+                            {% for error in form.last_name.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="first_name" class="form-label fw-semibold">{{ form.first_name.label.text }}</label>
+                            {{ form.first_name(class="form-control form-control-modern", placeholder="Имя") }}
+                            {% for error in form.first_name.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="patronymic" class="form-label fw-semibold">{{ form.patronymic.label.text }}</label>
+                            {{ form.patronymic(class="form-control form-control-modern", placeholder="Отчество") }}
+                            {% for error in form.patronymic.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold">{{ form.email.label.text }}</label>
+                        {{ form.email(class="form-control form-control-modern", placeholder="example@mail.ru", type="email") }}
+                        {% for error in form.email.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phone" class="form-label fw-semibold">{{ form.phone.label.text }}</label>
+                        {{ form.phone(class="form-control form-control-modern phone-mask", placeholder="8(XXX)XXX-XX-XX", id="phone") }}
+                        {% for error in form.phone.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label fw-semibold">{{ form.password.label.text }}</label>
+                            {{ form.password(class="form-control form-control-modern", placeholder="Пароль (мин. 8 символов)", type="password") }}
+                            {% for error in form.password.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="confirm_password" class="form-label fw-semibold">{{ form.confirm_password.label.text }}</label>
+                            {{ form.confirm_password(class="form-control form-control-modern", placeholder="Повторите пароль", type="password") }}
+                            {% for error in form.confirm_password.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-gradient btn-lg w-100 mt-2">Зарегистрироваться</button>
+                </form>
+            </div>
+            
+            <div class="card-footer bg-transparent text-center p-4 border-0">
+                <p class="text-muted mb-0">Уже есть аккаунт? <a href="{{ url_for('login') }}" class="text-decoration-none fw-semibold text-primary-custom">Войти</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const usernameField = document.getElementById('username');
+        if (usernameField) {
+            usernameField.focus();
+        }
+    });
+</script>
+{% endblock %}
