@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card-modern card">
+            <div class="card-header-modern text-white">
+                <h2 class="mb-0">Бронирование помещения</h2>
+                <p class="mb-0 mt-2">Заполните форму для бронирования помещения под конференцию</p>
+            </div>
+            
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('create_request') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        <label for="room_type" class="form-label fw-semibold">{{ form.room_type.label.text }}</label>
+                        {{ form.room_type(class="form-select form-control-modern") }}
+                        {% for error in form.room_type.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="start_date" class="form-label fw-semibold">{{ form.start_date.label.text }}</label>
+                        {{ form.start_date(class="form-control form-control-modern date-mask", placeholder="ДД.ММ.ГГГГ", type="text", id="datepicker") }}
+                        {% for error in form.start_date.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="payment_method" class="form-label fw-semibold">{{ form.payment_method.label.text }}</label>
+                        {{ form.payment_method(class="form-select form-control-modern") }}
+                        {% for error in form.payment_method.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-gradient px-4">Забронировать</button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary px-4">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
