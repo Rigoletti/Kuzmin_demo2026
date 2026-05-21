@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+        <div class="card-modern card">
+            <div class="card-header-modern text-white">
+                <h2 class="mb-0">Мои заявки</h2>
+                <p class="mb-0 mt-2">Список всех ваших заявок на бронирование помещений</p>
+            </div>
+            
+            <div class="card-body p-0">
+                {% if requests %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="px-4 py-3">ID</th>
+                                    <th class="px-4 py-3">Помещение</th>
+                                    <th class="px-4 py-3">Дата конференции</th>
+                                    <th class="px-4 py-3">Способ оплаты</th>
+                                    <th class="px-4 py-3">Статус</th>
+                                    <th class="px-4 py-3">Дата создания</th>
+                                    <th class="px-4 py-3">Отзыв</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in requests %}
+                                <tr>
+                                    <td class="px-4 py-3">{{ req.id }}</td>
+                                    <td class="px-4 py-3">{{ get_room_name(req.room_type) }}</td>
+                                    <td class="px-4 py-3">{{ req.start_date.strftime('%d.%m.%Y') }}</td>
+                                    <td class="px-4 py-3">{{ req.get_payment_method_name() }}</td>
+                                    <td class="px-4 py-3">
+                                        <span class="badge bg-{{ get_status_color(req.status) }} px-3 py-2 rounded-pill">
+                                            {{ get_status_name(req.status) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-muted">{{ req.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                                    <td class="px-4 py-3">
+                                        {% set review = req.reviews|first %}
+                                        {% if review %}
+                                            <span class="badge bg-success me-2">Отзыв оставлен</span>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#reviewModal{{ req.id }}">
+                                                Просмотр
+                                            </button>
+                                        {% else %}
+                                            {% if req.status == 'completed' %}
+                                                <a href="{{ url_for('leave_review', request_id=req.id) }}" class="btn btn-sm btn-warning">
+                                                    Оставить отзыв
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted small">Доступно после завершения</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+
+                                {% if review %}
+                                <div class="modal fade" id="reviewModal{{ req.id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header" style="background: #343A40; color: white;">
+                                                <h5 class="modal-title">Отзыв на бронирование "{{ get_room_name(req.room_type) }}"</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p><strong>Оценка:</strong></p>
+                                                <div class="mb-3">
+                                                    {% for i in range(review.rating) %}⭐{% endfor %}
+                                                    {% for i in range(5 - review.rating) %}☆{% endfor %}
+                                                </div>
+                                                <p><strong>Отзыв:</strong></p>
+                                                <div class="alert alert-light">{{ review.comment }}</div>
+                                                <p class="text-muted small">Оставлен: {{ review.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <p class="text-muted mb-3">У вас пока нет заявок</p>
+                        <a href="{{ url_for('create_request') }}" class="btn btn-gradient">Забронировать помещение</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
